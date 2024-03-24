@@ -21,7 +21,7 @@ export default function App() {
         </ul>
       </nav>
 
-      <div className="flex-1 bg-gradient-to-t from-black/60 to-black/60 text-slate-100">
+      <div className="flex-1 overflow-auto bg-gradient-to-t from-black/60 to-black/60 text-slate-100">
         <Routes>
           <Route path={routes.Home} element={<views.Home />} />
           <Route path={routes.Spatial} element={<views.Spatial />} />
