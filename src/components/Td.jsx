@@ -5,7 +5,7 @@ export default function Td({ children, className }) {
   return (
     <td
       className={twMerge(
-        "border-l border-slate-400 px-2 py-1 first:border-l-0",
+        "border-l border-slate-400 px-4 py-2 first:border-l-0",
         className,
       )}
     >

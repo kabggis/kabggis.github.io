@@ -1,12 +1,27 @@
 import { useMemo, useState } from "react";
 
+import Pagination from "./Pagination";
 import PropTypes from "prop-types";
 import Td from "./Td";
 import Th from "./Th";
 
-export default function Table({ title, data }) {
+/**
+ *
+ * @param {object} props
+ * @param {object[]} props.data
+ * @returns {JSX.Element}
+ */
+export default function Table({ data }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [start, end] = useMemo(() => {
+    const start = (currentPage - 1) * perPage;
+    const end = start + perPage;
+    return [start, end];
+  }, [currentPage, perPage]);
+
   const keys = useMemo(
-    () => Object.keys(data.length > 0 ? data[0] : []),
+    () => (data.length > 0 ? Object.keys(data[0]) : []),
     [data],
   );
 
@@ -20,25 +35,56 @@ export default function Table({ title, data }) {
       ),
     [data, query, keys],
   );
+  const dataToShow = useMemo(
+    () => filteredData.slice(start, end),
+    [filteredData, start, end],
+  );
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       <form className="flex items-center justify-between">
-        <div className="flex flex-col">
-          <h3 className="text-xl font-bold">{title}</h3>
-          <p className="text-xs">
-            Menampilkan {filteredData.length}/{data.length} data
-          </p>
+        <div className="flex items-center gap-1">
+          <span>Tampilkan</span>
+          <select
+            className="rounded-md px-2 py-1 text-slate-600 outline-slate-400 focus:outline"
+            value={perPage}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setPerPage(Number(e.target.value));
+            }}
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <span>data</span>
         </div>
         <input
           type="search"
           className="rounded-md px-4 py-2 text-slate-600 outline-slate-400 focus:outline"
           value={query}
           placeholder="Cari data ..."
-          onInput={(e) => setQuery(e.target.value)}
+          onInput={(e) => {
+            setCurrentPage(1);
+            setQuery(e.target.value);
+          }}
         />
       </form>
-      <table className="mt-4 w-full bg-slate-100">
+      <div className="flex flex-wrap items-center justify-between gap-y-2">
+        <p>
+          Menampilkan {start + 1} sampai {Math.min(end, data.length)} dari{" "}
+          {data.length} data
+        </p>
+        <Pagination
+          current={currentPage}
+          perPage={perPage}
+          total={data.length}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      </div>
+
+      <table className="w-full bg-slate-100">
         <thead className="border-b border-slate-400 text-slate-700">
           <tr>
             <Th>#</Th>
@@ -48,12 +94,12 @@ export default function Table({ title, data }) {
           </tr>
         </thead>
         <tbody className="text-slate-800">
-          {filteredData.map((row, i) => (
+          {dataToShow.map((row, i) => (
             <tr
               key={i}
               className="bg-slate-100 odd:bg-slate-200 hover:bg-slate-300"
             >
-              <Td className="text-center">{i + 1}</Td>
+              <Td className="text-center">{i + start + 1}</Td>
               {keys.map((key) => (
                 <Td key={key}>{row[key]}</Td>
               ))}
@@ -61,11 +107,23 @@ export default function Table({ title, data }) {
           ))}
         </tbody>
       </table>
+
+      <div className="flex flex-wrap items-center justify-between gap-y-2">
+        <p>
+          Menampilkan {start + 1} sampai {Math.min(end, data.length)} dari{" "}
+          {data.length} data
+        </p>
+        <Pagination
+          current={currentPage}
+          perPage={perPage}
+          total={data.length}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      </div>
     </div>
   );
 }
 
 Table.propTypes = {
-  title: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
