@@ -6,9 +6,11 @@ import Td from "./Td";
 import Th from "./Th";
 
 /**
- *
+ * A table component that displays data with pagination and search features.
  * @param {object} props
- * @param {object[]} props.data
+ * @param {{
+ *   [key: string]: any
+ * }[]} props.data
  * @returns {JSX.Element}
  */
 export default function Table({ data }) {
@@ -42,7 +44,7 @@ export default function Table({ data }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <form className="flex items-center justify-between">
+      <form className="flex flex-wrap items-center justify-between gap-y-2">
         <div className="flex items-center gap-1">
           <span>Tampilkan</span>
           <select
@@ -84,29 +86,31 @@ export default function Table({ data }) {
         />
       </div>
 
-      <table className="w-full bg-slate-100">
-        <thead className="border-b border-slate-400 text-slate-700">
-          <tr>
-            <Th>#</Th>
-            {keys.map((key) => (
-              <Th key={key}>{key}</Th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="text-slate-800">
-          {dataToShow.map((row, i) => (
-            <tr
-              key={i}
-              className="bg-slate-100 odd:bg-slate-200 hover:bg-slate-300"
-            >
-              <Td className="text-center">{i + start + 1}</Td>
+      <div className="w-full overflow-auto">
+        <table className="w-full bg-slate-100">
+          <thead className="border-b border-slate-400 text-slate-700">
+            <tr>
+              <Th>#</Th>
               {keys.map((key) => (
-                <Td key={key}>{row[key]}</Td>
+                <Th key={key}>{key}</Th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="text-slate-800">
+            {dataToShow.map((row, i) => (
+              <tr
+                key={i}
+                className="bg-slate-100 odd:bg-slate-200 hover:bg-slate-300"
+              >
+                <Td className="text-center">{i + start + 1}</Td>
+                {keys.map((key) => (
+                  <Td key={key}>{row[key]}</Td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <div className="flex flex-wrap items-center justify-between gap-y-2">
         <p>

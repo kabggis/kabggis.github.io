@@ -6,7 +6,7 @@ export default function NavLink({ to, children }) {
     <NavLinkRouter
       to={to}
       className={({ isActive }) =>
-        `inline-block px-8 py-4 hover:bg-slate-900/10 ${
+        `inline-flex h-full items-center px-8 py-4 hover:bg-slate-900/10 ${
           isActive ? "bg-slate-900/10" : ""
         }`
       }
