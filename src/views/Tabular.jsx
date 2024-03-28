@@ -13,10 +13,10 @@ export default function Tabular() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-center text-3xl font-bold uppercase">
-        WEBGIS LAHAN PERTANIAN
+        webgis lahan pertanian
       </h1>
       <h2 className="my-2 text-center text-lg font-bold uppercase">
-        DINAS PERTANIAN KOTA BIMA
+        dinas pertanian kabupaten gorontalo
       </h2>
       <Table data={data} />
     </div>

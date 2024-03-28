@@ -31,9 +31,11 @@
 
 ## Tentang Projek
 
-[![KabGGIS Screen Shot [Akan ditambahkan]][product-screenshot]](https://kabggis.github.io)
-
 KabGGIS merupakan WebGIS yang menyajikan data-data geospasial Kabupaten Gorontalo, Provinsi Gorontalo, Indonesia. WebGIS ini dibangun dengan menggunakan teknologi-teknologi modern seperti React, TailwindCSS, dan LeafletJS.
+
+[![KabGGIS Home Screen][home-screenshot]](https://kabggis.github.io)
+[![KabGGIS Spatial Screen][spatial-screenshot]](https://kabggis.github.io)
+[![KabGGIS Tabular Screen][tabular-screenshot]](https://kabggis.github.io)
 
 <p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
@@ -87,7 +89,9 @@ Jika Anda ingin berkontribusi pada projek ini, silakan ikuti langkah-langkah di 
 
 <p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-[product-screenshot]: images/screenshot.png
+[home-screenshot]: public/screenshots/home.png
+[spatial-screenshot]: public/screenshots/spatial.png
+[tabular-screenshot]: public/screenshots/tabular.png
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
 [TailwindCSS]: https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
