@@ -4,7 +4,7 @@ import strings from "../constants/strings";
 
 export default function Home() {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-8">
+    <div className="flex h-svh flex-col items-center justify-center gap-8">
       <header className="text-center">
         <h1 className="text-4xl font-bold">{strings.app_name}</h1>
         <p className="mt-2">

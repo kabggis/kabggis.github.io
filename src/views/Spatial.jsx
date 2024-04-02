@@ -2,6 +2,8 @@ import { Checkbox, GeoJSON, If } from "../components";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useEffect, useState } from "react";
 
+import { FaArrowLeft } from "react-icons/fa6";
+import { NavLink } from "react-router-dom";
 import { randomColor } from "../utils/random";
 import useGeoJSON from "../hooks/useGeoJSON";
 
@@ -30,11 +32,17 @@ export default function Spatial() {
   }, [jaringanIrigasiGeoJSON]);
 
   return (
-    <div className="flex h-full">
+    <div className="relative isolate flex h-svh">
+      <NavLink
+        to="/"
+        className="absolute left-16 top-4 inline-flex items-center gap-2 rounded bg-slate-50 px-2 py-1 text-slate-800 shadow-md transition-colors hover:bg-slate-100"
+      >
+        <FaArrowLeft className="inline-block h-[1em]" /> Kembali
+      </NavLink>
       <MapContainer
         center={[0.7569440156221701, 122.61520767212]}
         zoom={10}
-        className="flex-auto"
+        className="-z-10 flex-auto"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -47,7 +55,7 @@ export default function Spatial() {
           <GeoJSON data={jaringanIrigasiGeoJSON} features={features} />
         </If>
       </MapContainer>
-      <aside className="flex w-80 flex-col gap-2 overflow-y-auto bg-slate-100 px-8 py-4 text-slate-900">
+      <aside className="flex w-80 flex-col gap-4 overflow-y-auto bg-slate-100 px-8 py-4 text-slate-900">
         <h3 className="my-4 text-lg font-bold">Peta Kabupaten Gorontalo</h3>
         <Checkbox
           defaultChecked={showBatasWilayah}

@@ -33,11 +33,12 @@ export default function GeoJSON({ data, features, bound = false, ...props }) {
       key={randomKey}
       data={data}
       style={(feature) => {
-        if (!features) return;
+        const defaultStyle = { color: "#3399ff", weight: 2 };
+        if (!features) return defaultStyle;
         const foundFeature = features.find(
           (f) => f.name === feature.properties.REMARK,
         );
-        if (foundFeature) return { color: foundFeature.color };
+        if (foundFeature) return { ...defaultStyle, color: foundFeature.color };
       }}
       filter={(feature) => {
         if (!features) return true;
