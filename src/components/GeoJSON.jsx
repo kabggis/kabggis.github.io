@@ -14,7 +14,13 @@ import bbox from "@turf/bbox";
  * } props.features
  * @returns
  */
-export default function GeoJSON({ data, features, bound = false, ...props }) {
+export default function GeoJSON({
+  data,
+  features,
+  color = "#3399ff",
+  bound = false,
+  ...props
+}) {
   const map = useMap();
   useEffect(() => {
     if (data && bound) {
@@ -33,7 +39,7 @@ export default function GeoJSON({ data, features, bound = false, ...props }) {
       key={randomKey}
       data={data}
       style={(feature) => {
-        const defaultStyle = { color: "#3399ff", weight: 2 };
+        const defaultStyle = { color, weight: 2 };
         if (!features) return defaultStyle;
         const foundFeature = features.find(
           (f) => f.name === feature.properties.REMARK,
@@ -56,6 +62,7 @@ export default function GeoJSON({ data, features, bound = false, ...props }) {
 
 GeoJSON.propTypes = {
   data: PropTypes.object,
+  color: PropTypes.string,
   features: PropTypes.arrayOf(PropTypes.object),
   bound: PropTypes.bool,
   props: PropTypes.object,

@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-export default function useGeoJSON(url) {
+import { randomColor } from "../utils/random";
+
+export default function useGeoJSON(name) {
   const [data, setData] = useState(null);
+  const [show, setShow] = useState(true);
+  const color = useMemo(() => randomColor(), []);
 
   useEffect(() => {
-    fetch(url)
+    fetch(`/geojson/${name}.geojson`)
       .then((res) => res.json())
       .then((data) => setData(data));
-  }, [url]);
+  }, [name]);
 
-  return data;
+  return [data, show, setShow, color];
 }

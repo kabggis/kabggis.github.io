@@ -5,7 +5,7 @@ import useGeoJSON from "../hooks/useGeoJSON";
 import { useMemo } from "react";
 
 export default function Tabular() {
-  const geoJSON = useGeoJSON("/jaringan-irigasi.geojson");
+  const [geoJSON] = useGeoJSON("jaringan-irigasi");
   const features = useMemo(
     () =>
       geoJSON

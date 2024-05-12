@@ -16,7 +16,7 @@ export default function Checkbox({
   return (
     <div
       className={twMerge(
-        "flex gap-1 hover:bg-slate-200 has-[:disabled]:cursor-not-allowed",
+        "flex gap-1 py-2 hover:bg-slate-200 has-[:disabled]:cursor-not-allowed",
         className,
       )}
     >
