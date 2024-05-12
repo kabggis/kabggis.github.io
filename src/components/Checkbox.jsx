@@ -1,3 +1,4 @@
+import { FaCheck } from "react-icons/fa6";
 import PropTypes from "prop-types";
 import { twMerge } from "tailwind-merge";
 import { useId } from "react";
@@ -29,11 +30,13 @@ export default function Checkbox({
       />
       <label
         htmlFor={id}
-        className="h-4 w-4 flex-none cursor-pointer rounded border border-[var(--backgroundColor,#39f)] bg-slate-100 peer-checked:bg-[var(--backgroundColor,#39f)] peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+        className="h-4 w-4 flex-none cursor-pointer rounded border border-[var(--backgroundColor,#39f)] bg-slate-100 text-slate-100 peer-checked:bg-[var(--backgroundColor,#39f)] peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
         style={{
           "--backgroundColor": color,
         }}
-      ></label>
+      >
+        <FaCheck className="h-full w-full" />
+      </label>
       <label
         htmlFor={id}
         className="flex-auto cursor-pointer leading-4 peer-disabled:cursor-not-allowed"
