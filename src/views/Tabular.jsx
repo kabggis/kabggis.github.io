@@ -5,7 +5,7 @@ import useGeoJSON from "../hooks/useGeoJSON";
 import { useMemo } from "react";
 
 export default function Tabular() {
-  const [geoJSON] = useGeoJSON("jaringan-irigasi");
+  const [geoJSON] = useGeoJSON("sawah");
   const features = useMemo(
     () =>
       geoJSON
@@ -13,8 +13,14 @@ export default function Tabular() {
             .map((feature) => feature.properties)
             .filter(
               (value, index, self) =>
-                self.findIndex((t) => t.REMARK === value.REMARK) === index,
+                self.findIndex((t) => t.DESA === value.DESA) === index,
             )
+            .map((record) => ({
+              Desa: record.DESA,
+              Kecamatan: record.KECAMATAN,
+              Luas: record.LUAS_HA + " Ha",
+              Keterangan: record.KETERANGAN,
+            }))
         : [],
     [geoJSON],
   );
@@ -28,10 +34,10 @@ export default function Tabular() {
         <FaArrowLeft className="inline-block h-[1em]" /> Kembali
       </Link>
       <h1 className="text-center text-3xl font-bold uppercase">
-        webgis lahan pertanian
+        kawasan pertanian
       </h1>
       <h2 className="my-2 text-center text-lg font-bold uppercase">
-        dinas pertanian kabupaten gorontalo
+        kabupaten gorontalo
       </h2>
       <Table data={features} />
     </div>

@@ -4,7 +4,6 @@ import { randomColor } from "../utils/random";
 
 export default function useGeoJSON(name) {
   const [data, setData] = useState(null);
-  const [show, setShow] = useState(true);
   const color = useMemo(() => randomColor(), []);
 
   useEffect(() => {
@@ -13,5 +12,5 @@ export default function useGeoJSON(name) {
       .then((data) => setData(data));
   }, [name]);
 
-  return [data, show, setShow, color];
+  return [data, color];
 }

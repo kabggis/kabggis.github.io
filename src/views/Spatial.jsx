@@ -1,61 +1,68 @@
-import { Checkbox, GeoJSON, If } from "../components";
-import { MapContainer, TileLayer, Tooltip } from "react-leaflet";
-import { useEffect, useState } from "react";
+import "leaflet/dist/leaflet.css";
+
+import {
+  LayerGroup,
+  LayersControl,
+  MapContainer,
+  ScaleControl,
+  TileLayer,
+  Tooltip,
+} from "react-leaflet";
 
 import { FaArrowLeft } from "react-icons/fa6";
+import { GeoJSON } from "../components";
 import { NavLink } from "react-router-dom";
-import { randomColor } from "../utils/random";
+import { useCallback } from "react";
 import useGeoJSON from "../hooks/useGeoJSON";
+import useGeoJSONFeatures from "../hooks/useGeoJSONFeatures";
 
 export default function Spatial() {
-  const [
-    administrasiGeoJSON,
-    showAdministrasi,
-    setShowAdministrasi,
-    colorAdministrasi,
-  ] = useGeoJSON("administrasi");
-  // const [kecamatanGeoJSON, showKecamatan, setShowKecamatan, colorKecamatan] =
-  //   useGeoJSON("kecamatan");
-  const [
+  const [administrasiGeoJSON, colorAdministrasi] = useGeoJSON("administrasi");
+
+  const [kecamatanGeoJSON] = useGeoJSON("kecamatan");
+  const kecamatanMatchFeature = useCallback(
+    (feature, featuresGeoJSON) => [
+      featuresGeoJSON.findIndex(
+        ({ geoJSON }) =>
+          geoJSON.features[0].properties.NAMOBJ === feature.properties.NAMOBJ,
+      ),
+      "Kecamatan " + feature.properties.NAMOBJ,
+    ],
+    [],
+  );
+  const kecamatanFeatures = useGeoJSONFeatures(
+    kecamatanGeoJSON,
+    kecamatanMatchFeature,
+  );
+
+  const [jaringanIrigasiGeoJSON] = useGeoJSON("jaringan-irigasi");
+  const matchFeature = useCallback(
+    (feature, featuresGeoJSON) => [
+      featuresGeoJSON.findIndex(
+        ({ geoJSON }) =>
+          geoJSON.features[0].properties.REMARK === feature.properties.REMARK,
+      ),
+      feature.properties.REMARK,
+    ],
+    [],
+  );
+  const jaringanIrigasiFeatures = useGeoJSONFeatures(
     jaringanIrigasiGeoJSON,
-    showJaringanIrigasi,
-    setShowJaringanIrigasi,
-    colorJaringanIrigasi,
-  ] = useGeoJSON("jaringan-irigasi");
+    matchFeature,
+  );
 
-  // const [featuresKecamatan, setFeaturesKecamatan] = useState([]);
-  // useEffect(() => {
-  //   if (kecamatanGeoJSON === null) return;
-
-  //   const features = [];
-  //   for (const feature of kecamatanGeoJSON.features) {
-  //     const name = feature.properties.NAMOBJ;
-  //     if (!features.find((r) => r.name === name))
-  //       features.push({
-  //         name,
-  //         color: randomColor(),
-  //         show: true,
-  //       });
-  //   }
-  //   setFeaturesKecamatan(features);
-  // }, [kecamatanGeoJSON]);
-
-  const [featuresJaringanIrigasi, setFeaturesJaringanIrigasi] = useState([]);
-  useEffect(() => {
-    if (jaringanIrigasiGeoJSON === null) return;
-
-    const features = [];
-    for (const feature of jaringanIrigasiGeoJSON.features) {
-      const remark = feature.properties.REMARK;
-      if (!features.find((r) => r.name === remark))
-        features.push({
-          name: remark,
-          color: randomColor(),
-          show: true,
-        });
-    }
-    setFeaturesJaringanIrigasi(features);
-  }, [jaringanIrigasiGeoJSON]);
+  const [sawahGeoJSON] = useGeoJSON("sawah");
+  const sawahMatchFeature = useCallback(
+    (feature, featuresGeoJSON) => [
+      featuresGeoJSON.findIndex(
+        ({ geoJSON }) =>
+          geoJSON.features[0].properties.DESA === feature.properties.DESA,
+      ),
+      "Sawah Desa " + feature.properties.DESA,
+    ],
+    [],
+  );
+  const sawahFeatures = useGeoJSONFeatures(sawahGeoJSON, sawahMatchFeature);
 
   return (
     <div className="relative isolate flex h-svh">
@@ -70,91 +77,80 @@ export default function Spatial() {
         zoom={10}
         className="-z-10 flex-auto"
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <If condition={showAdministrasi}>
-          <GeoJSON data={administrasiGeoJSON} color={colorAdministrasi}>
-            <Tooltip sticky>Wilayah Administrasi</Tooltip>
-          </GeoJSON>
-        </If>
-        {/* <If condition={showKecamatan}>
-          <GeoJSON
-            data={kecamatanGeoJSON}
-            features={featuresKecamatan}
-            color={colorKecamatan}
-          />
-        </If> */}
-        <If condition={showJaringanIrigasi}>
-          <GeoJSON
-            data={jaringanIrigasiGeoJSON}
-            features={featuresJaringanIrigasi}
-            color={colorJaringanIrigasi}
-          />
-        </If>
+        <LayersControl position="topright" collapsed={false}>
+          <LayersControl.BaseLayer checked name="OpenStreetMap">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          </LayersControl.BaseLayer>
+
+          <LayersControl.BaseLayer name="Satelite View">
+            <TileLayer
+              attribution='&copy; CNES, Distribution Airbus DS, &copy; Airbus DS, &copy; PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}"
+              ext="jpg"
+            />
+          </LayersControl.BaseLayer>
+
+          <LayersControl.Overlay name="Batas Admininstrasi">
+            <LayerGroup>
+              <GeoJSON
+                data={administrasiGeoJSON}
+                color={colorAdministrasi}
+                stroke
+              />
+            </LayerGroup>
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay checked name="Kecamatan">
+            <LayerGroup>
+              {kecamatanFeatures.map(({ geoJSON, color }) => (
+                <GeoJSON
+                  key={geoJSON.name}
+                  data={geoJSON}
+                  color={color}
+                  fill
+                  opacity={0.3}
+                >
+                  <Tooltip sticky>{geoJSON.name}</Tooltip>
+                </GeoJSON>
+              ))}
+            </LayerGroup>
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay checked name="Sawah">
+            <LayerGroup>
+              {sawahFeatures.map(({ geoJSON, color }) => (
+                <GeoJSON
+                  key={geoJSON.name}
+                  data={geoJSON}
+                  color={color}
+                  fill
+                  stroke
+                  opacity={1}
+                >
+                  <Tooltip sticky>{geoJSON.name}</Tooltip>
+                </GeoJSON>
+              ))}
+            </LayerGroup>
+          </LayersControl.Overlay>
+
+          {jaringanIrigasiFeatures.map(({ geoJSON, color }) => (
+            <LayersControl.Overlay
+              key={geoJSON.name}
+              checked
+              name={geoJSON.name}
+            >
+              <GeoJSON data={geoJSON} color={color} stroke weight={3}>
+                <Tooltip sticky>{geoJSON.name}</Tooltip>
+              </GeoJSON>
+            </LayersControl.Overlay>
+          ))}
+        </LayersControl>
+
+        <ScaleControl position="bottomleft" maxWidth={200} />
       </MapContainer>
-      <aside className="flex w-80 flex-col overflow-y-auto bg-slate-100 px-8 py-4 text-slate-900">
-        <h3 className="my-4 text-lg font-bold">Peta Kabupaten Gorontalo</h3>
-        <Checkbox
-          defaultChecked={showAdministrasi}
-          onChange={() => setShowAdministrasi(!showAdministrasi)}
-          label="Wilayah Administrasi"
-          color={colorAdministrasi}
-        />
-        {/* <Checkbox
-          defaultChecked={showKecamatan}
-          onChange={() => setShowKecamatan(!showKecamatan)}
-          label="Batas Kecamatan"
-          color={colorKecamatan}
-        />
-        {featuresKecamatan.map(({ name, color, show }) => (
-          <Checkbox
-            key={name}
-            defaultChecked={show}
-            label={name}
-            color={color}
-            disabled={!showKecamatan}
-            className="ms-4"
-            onChange={() => {
-              setFeaturesKecamatan(
-                featuresKecamatan.map((feature) => {
-                  return {
-                    ...feature,
-                    show: feature.name === name ? !feature.show : feature.show,
-                  };
-                }),
-              );
-            }}
-          />
-        ))} */}
-        <Checkbox
-          defaultChecked={showJaringanIrigasi}
-          onChange={() => setShowJaringanIrigasi(!showJaringanIrigasi)}
-          label="Jaringan Irigasi"
-          color={colorJaringanIrigasi}
-        />
-        {featuresJaringanIrigasi.map(({ name, color, show }) => (
-          <Checkbox
-            key={name}
-            defaultChecked={show}
-            label={name}
-            color={color}
-            disabled={!showJaringanIrigasi}
-            className="ms-4"
-            onChange={() => {
-              setFeaturesJaringanIrigasi(
-                featuresJaringanIrigasi.map((feature) => {
-                  return {
-                    ...feature,
-                    show: feature.name === name ? !feature.show : feature.show,
-                  };
-                }),
-              );
-            }}
-          />
-        ))}
-      </aside>
     </div>
   );
 }
