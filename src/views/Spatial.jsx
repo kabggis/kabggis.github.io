@@ -137,7 +137,7 @@ export default function Spatial() {
                   opacity={1}
                 >
                   <Tooltip sticky>{geoJSON.name}</Tooltip>
-                  <Popup className="max-h-[50vh] overflow-auto">
+                  <Popup>
                     <table>
                       <tr>
                         <th>Nama</th>
