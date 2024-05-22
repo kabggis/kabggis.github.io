@@ -4,6 +4,7 @@ import {
   LayerGroup,
   LayersControl,
   MapContainer,
+  Popup,
   ScaleControl,
   TileLayer,
   Tooltip,
@@ -72,12 +73,17 @@ export default function Spatial() {
       >
         <FaArrowLeft className="inline-block h-[1em]" /> Kembali
       </NavLink>
+
+      <h1 className="absolute left-1/2 top-4 z-10 mx-auto w-fit -translate-x-1/2 rounded bg-white/30 px-2 py-1 text-center text-xl font-bold text-slate-800 backdrop-blur">
+        Peta Spasial Kabupaten Gorontalo
+      </h1>
+
       <MapContainer
         center={[0.7569440156221701, 122.61520767212]}
         zoom={10}
         className="-z-10 flex-auto"
       >
-        <LayersControl position="topright" collapsed={false}>
+        <LayersControl position="topright">
           <LayersControl.BaseLayer checked name="OpenStreetMap">
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -131,6 +137,34 @@ export default function Spatial() {
                   opacity={1}
                 >
                   <Tooltip sticky>{geoJSON.name}</Tooltip>
+                  <Popup className="max-h-[50vh] overflow-auto">
+                    <table>
+                      <tr>
+                        <th>Nama</th>
+                        <td>:</td>
+                        <td>{geoJSON.name}</td>
+                      </tr>
+                      <tr>
+                        <th>Kecamatan</th>
+                        <td>:</td>
+                        <td>{geoJSON.features[0].properties.KECAMATAN}</td>
+                      </tr>
+                      <tr>
+                        <th>Total Luas</th>
+                        <td>:</td>
+                        <td>
+                          {geoJSON.features
+                            .reduce(
+                              (acc, feature) =>
+                                acc + feature.properties.LUAS_HA,
+                              0,
+                            )
+                            .toFixed(2)}
+                          ha
+                        </td>
+                      </tr>
+                    </table>
+                  </Popup>
                 </GeoJSON>
               ))}
             </LayerGroup>
@@ -151,6 +185,13 @@ export default function Spatial() {
 
         <ScaleControl position="bottomleft" maxWidth={200} />
       </MapContainer>
+
+      <footer className="absolute bottom-4 left-1/2 right-0 w-fit -translate-x-1/2 rounded bg-white/30 px-2 py-1 text-center text-slate-800 backdrop-blur">
+        Copyright &copy; 2024{" "}
+        <a href="https://github.com/kabggis/" target="_blank">
+          Kabggis Team
+        </a>
+      </footer>
     </div>
   );
 }
