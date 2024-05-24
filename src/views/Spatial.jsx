@@ -4,7 +4,6 @@ import {
   LayerGroup,
   LayersControl,
   MapContainer,
-  Marker,
   Popup,
   ScaleControl,
   TileLayer,
@@ -19,16 +18,16 @@ import useGeoJSON from "../hooks/useGeoJSON";
 import useGeoJSONFeatures from "../hooks/useGeoJSONFeatures";
 
 export default function Spatial() {
-  const [administrasiGeoJSON, colorAdministrasi] = useGeoJSON("administrasi");
+  const [administrasiGeoJSON, colorAdministrasi] = useGeoJSON("kecamatan");
 
   const [kecamatanGeoJSON] = useGeoJSON("kecamatan");
   const kecamatanMatchFeature = useCallback(
     (feature, featuresGeoJSON) => [
       featuresGeoJSON.findIndex(
         ({ geoJSON }) =>
-          geoJSON.features[0].properties.NAMOBJ === feature.properties.NAMOBJ,
+          geoJSON.features[0].properties.WADMKC === feature.properties.WADMKC,
       ),
-      "Kecamatan " + feature.properties.NAMOBJ,
+      feature.properties.WADMKC,
     ],
     [],
   );
@@ -60,7 +59,7 @@ export default function Spatial() {
         ({ geoJSON }) =>
           geoJSON.features[0].properties.DESA === feature.properties.DESA,
       ),
-      "Sawah Desa " + feature.properties.DESA,
+      feature.properties.DESA,
     ],
     [],
   );
@@ -81,8 +80,8 @@ export default function Spatial() {
 
       <MapContainer
         center={[0.68694401562217, 122.75520767212]}
-        zoom={9.5}
-        minZoom={9.5}
+        zoom={10}
+        minZoom={10}
         className="-z-10 flex-auto"
       >
         <LayersControl position="topright">
@@ -93,7 +92,7 @@ export default function Spatial() {
             />
           </LayersControl.BaseLayer>
 
-          <LayersControl.BaseLayer name="Satelite View">
+          <LayersControl.BaseLayer name="Citra Satelit">
             <TileLayer
               attribution='&copy; CNES, Distribution Airbus DS, &copy; Airbus DS, &copy; PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}"
@@ -121,7 +120,30 @@ export default function Spatial() {
                   fill
                   opacity={0.3}
                 >
-                  <Tooltip sticky>{geoJSON.name}</Tooltip>
+                  <Tooltip sticky>Kecamatan {geoJSON.name}</Tooltip>
+                  <Popup>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <th>Nama</th>
+                          <td>:</td>
+                          <td>{geoJSON.name}</td>
+                        </tr>
+                        <tr>
+                          <th>Luas</th>
+                          <td>:</td>
+                          <td>
+                            {geoJSON.features
+                              .reduce(
+                                (acc, feature) => acc + feature.properties.LUAS,
+                                0,
+                              )
+                              .toFixed(2)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </Popup>
                 </GeoJSON>
               ))}
             </LayerGroup>
@@ -138,33 +160,35 @@ export default function Spatial() {
                   stroke
                   opacity={1}
                 >
-                  <Tooltip sticky>{geoJSON.name}</Tooltip>
+                  <Tooltip sticky>Sawah Desa {geoJSON.name}</Tooltip>
                   <Popup>
                     <table>
-                      <tr>
-                        <th>Nama</th>
-                        <td>:</td>
-                        <td>{geoJSON.name}</td>
-                      </tr>
-                      <tr>
-                        <th>Kecamatan</th>
-                        <td>:</td>
-                        <td>{geoJSON.features[0].properties.KECAMATAN}</td>
-                      </tr>
-                      <tr>
-                        <th>Total Luas</th>
-                        <td>:</td>
-                        <td>
-                          {geoJSON.features
-                            .reduce(
-                              (acc, feature) =>
-                                acc + feature.properties.LUAS_HA,
-                              0,
-                            )
-                            .toFixed(2)}
-                          ha
-                        </td>
-                      </tr>
+                      <tbody>
+                        <tr>
+                          <th>Desa</th>
+                          <td>:</td>
+                          <td>{geoJSON.name}</td>
+                        </tr>
+                        <tr>
+                          <th>Kecamatan</th>
+                          <td>:</td>
+                          <td>{geoJSON.features[0].properties.KECAMATAN}</td>
+                        </tr>
+                        <tr>
+                          <th>Total Luas</th>
+                          <td>:</td>
+                          <td>
+                            {geoJSON.features
+                              .reduce(
+                                (acc, feature) =>
+                                  acc + feature.properties.LUAS_HA,
+                                0,
+                              )
+                              .toFixed(2)}
+                            ha
+                          </td>
+                        </tr>
+                      </tbody>
                     </table>
                   </Popup>
                 </GeoJSON>
@@ -172,17 +196,21 @@ export default function Spatial() {
             </LayerGroup>
           </LayersControl.Overlay>
 
-          {jaringanIrigasiFeatures.map(({ geoJSON, color }) => (
-            <LayersControl.Overlay
-              key={geoJSON.name}
-              checked
-              name={geoJSON.name}
-            >
-              <GeoJSON data={geoJSON} color={color} stroke weight={3}>
-                <Tooltip sticky>{geoJSON.name}</Tooltip>
-              </GeoJSON>
-            </LayersControl.Overlay>
-          ))}
+          <LayersControl.Overlay checked name="Jaringan Irigasi">
+            <LayerGroup>
+              {jaringanIrigasiFeatures.map(({ geoJSON, color }) => (
+                <GeoJSON
+                  key={geoJSON.name}
+                  data={geoJSON}
+                  color={color}
+                  stroke
+                  weight={3}
+                >
+                  <Tooltip sticky>{geoJSON.name}</Tooltip>
+                </GeoJSON>
+              ))}
+            </LayerGroup>
+          </LayersControl.Overlay>
         </LayersControl>
 
         <ScaleControl position="bottomleft" maxWidth={200} />
