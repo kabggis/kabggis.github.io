@@ -4,6 +4,7 @@ import {
   LayerGroup,
   LayersControl,
   MapContainer,
+  Marker,
   Popup,
   ScaleControl,
   TileLayer,
@@ -79,8 +80,9 @@ export default function Spatial() {
       </h1>
 
       <MapContainer
-        center={[0.7569440156221701, 122.61520767212]}
-        zoom={10}
+        center={[0.68694401562217, 122.75520767212]}
+        zoom={9.5}
+        minZoom={9.5}
         className="-z-10 flex-auto"
       >
         <LayersControl position="topright">
